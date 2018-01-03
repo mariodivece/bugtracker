@@ -3,7 +3,7 @@ A proof of concept application describing several architectural patterns
 
 <img src="https://github.com/mariodivece/bugtracker/raw/master/screenshot.png" />
 
-The architectural overview:
+Architectural Overview:
 - A core library controls the entire application. It is platform independent.
 - This core library has a message hub so that messages can be sent between the lib and the front-end UI. The Message hub defines a very simple delegate which is forced to be asynchronous to prevent the UI from blocking.
 - The core library also has a dependency injection container. This allows for retrieval of platform-specific functionality
