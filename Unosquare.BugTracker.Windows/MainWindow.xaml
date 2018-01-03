@@ -1,0 +1,51 @@
+﻿<Window x:Class="Unosquare.BugTracker.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Unosquare.BugTracker.Windows"
+        xmlns:bugtracker="clr-namespace:Unosquare.BugTracker.ViewModels;assembly=Unosquare.BugTracker"
+        mc:Ignorable="d" DataContext="{StaticResource RootViewModel}"
+        x:Name="RootElement" IsEnabled="{Binding Path=IsUserInterfaceEnabled}"
+        Title="{Binding Path=Title}" Height="600" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30*" />
+            <ColumnDefinition Width="70*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Column="0" Grid.Row="0">
+            <Button DockPanel.Dock="Left" Click="TakePicture_Click">Take Picture</Button>
+        </DockPanel>
+        <ListBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Path=PictureHeaders}" SelectionMode="Single" SelectedItem="{Binding Path=SelectedPictureHeader}">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type bugtracker:PictureHeaderViewModel}">
+                    <DockPanel>
+                        <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" DockPanel.Dock="Top"></TextBlock>
+                        <TextBlock Text="{Binding DateTakenUtc}" DockPanel.Dock="Left"></TextBlock>
+                    </DockPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Image Grid.Row="1" Grid.Column="1" Source="{Binding Path=CurrentPicture.ImageBytes}" PreviewMouseLeftButtonDown="PinsView_MouseDoubleClick"></Image>
+        <ItemsControl Grid.Row="1" Grid.Column="1" x:Name="PinsView" ItemsSource="{Binding Path=CurrentPicture.Pins}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type bugtracker:PinViewModel}">
+                    <Ellipse Width="10" Height="10" Fill="Blue" Stroke="Black" Margin="{Binding Path=Position, Converter={StaticResource PinPositionConverter}}"></Ellipse>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <StatusBar Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
+            <StatusBarItem Content="{Binding Path=StatusMessage}"></StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>
