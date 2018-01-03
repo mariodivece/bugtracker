@@ -3,9 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Unosquare.BugTracker.Windows"
              xmlns:bugtracker="clr-namespace:Unosquare.BugTracker;assembly=Unosquare.BugTracker"
+             xmlns:convs="clr-namespace:Unosquare.BugTracker.Windows.Converters"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <bugtracker:AppRoot x:Key="RootViewModel" />
-        <local:PinPositionConverter x:Key="PinPositionConverter" />
+        <convs:BoolToVisConverter x:Key="BoolToVisConverter" />
+        <convs:BoolToColorConverter x:Key="BoolToColorConverter" />
     </Application.Resources>
 </Application>

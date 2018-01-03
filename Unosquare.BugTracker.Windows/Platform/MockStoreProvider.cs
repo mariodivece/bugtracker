@@ -52,14 +52,23 @@
                 StoredPictures.Add(picture);
             else
             {
+                // HACK: It would be much better to use an object mapper such as the one available in the SWAN project
                 existingPicture.Header.DateTakenUtc = picture.Header.DateTakenUtc;
                 existingPicture.Header.Location.Latitude = picture.Header.Location.Longitude;
                 existingPicture.Header.Location.Longitude = picture.Header.Location.Longitude;
                 existingPicture.Header.Name = picture.Header.Name;
                 existingPicture.Header.PictureId = picture.Header.PictureId;
-                existingPicture.Pins.Clear();
-                foreach (var pin in picture.Pins)
-                    existingPicture.Pins.Add(pin);
+                existingPicture.Pin.BoundingBox.H = picture.Pin.BoundingBox.H;
+                existingPicture.Pin.BoundingBox.W = picture.Pin.BoundingBox.W;
+                existingPicture.Pin.BoundingBox.X = picture.Pin.BoundingBox.X;
+                existingPicture.Pin.BoundingBox.Y = picture.Pin.BoundingBox.Y;
+                existingPicture.Pin.IsBoundingBoxVisible = picture.Pin.IsBoundingBoxVisible;
+                existingPicture.Pin.IsBugIdentified = picture.Pin.IsBugIdentified;
+                existingPicture.Pin.X = picture.Pin.X;
+                existingPicture.Pin.Y = picture.Pin.Y;
+                existingPicture.Pin.IsActive = picture.Pin.IsActive;
+                existingPicture.ImageWidth = picture.ImageWidth;
+                existingPicture.ImageHeight = picture.ImageHeight;
 
                 picture = existingPicture;
             }

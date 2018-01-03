@@ -18,9 +18,18 @@
             <RowDefinition></RowDefinition>
             <RowDefinition Height="30"></RowDefinition>
         </Grid.RowDefinitions>
-        <DockPanel Grid.Column="0" Grid.Row="0">
-            <Button DockPanel.Dock="Left" Click="TakePicture_Click">Take Picture</Button>
-        </DockPanel>
+
+        <ToolBar Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
+            <Button Click="TakePicture_Click">Take Picture</Button>
+            <Separator></Separator>
+            <Button Click="DropPin_Click">Drop Pin</Button>
+            <Separator></Separator>
+            <Button Click="FixPin_Click">Fix Pin</Button>
+            <Separator></Separator>
+            <Button Click="MarkIdentified_Click">Mark As Identified</Button>
+            <Separator></Separator>
+            <Button Click="ToggleBoundingBox_Click">Toggle Bounding Box</Button>
+        </ToolBar>
         <ListBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Path=PictureHeaders}" SelectionMode="Single" SelectedItem="{Binding Path=SelectedPictureHeader}">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type bugtracker:PictureHeaderViewModel}">
@@ -31,19 +40,42 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Image Grid.Row="1" Grid.Column="1" Source="{Binding Path=CurrentPicture.ImageBytes}" PreviewMouseLeftButtonDown="PinsView_MouseDoubleClick"></Image>
-        <ItemsControl Grid.Row="1" Grid.Column="1" x:Name="PinsView" ItemsSource="{Binding Path=CurrentPicture.Pins}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type bugtracker:PinViewModel}">
-                    <Ellipse Width="10" Height="10" Fill="Blue" Stroke="Black" Margin="{Binding Path=Position, Converter={StaticResource PinPositionConverter}}"></Ellipse>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <TextBlock Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" 
+                   FontWeight="Bold"
+                   Foreground="DarkGray"
+                   FontSize="30"
+                    Visibility="{Binding Path=CurrentPicture, Converter={StaticResource BoolToVisConverter}, ConverterParameter=1}"
+                   HorizontalAlignment="Center">No Picture Selected</TextBlock>
+        <Canvas Grid.Row="1" Grid.Column="1" Visibility="{Binding Path=CurrentPicture, Converter={StaticResource BoolToVisConverter}}" ClipToBounds="True">
+            <Thumb x:Name="PinThumb" Panel.ZIndex="99" Cursor="Hand" 
+                   MouseDoubleClick="PinThumb_MouseDoubleClick"
+                   Visibility="{Binding Path=CurrentPicture.Pin.IsActive, Converter={StaticResource BoolToVisConverter}}"
+                   Canvas.Left="{Binding Path=CurrentPicture.Pin.X, Mode=TwoWay}" 
+                   Canvas.Top="{Binding Path=CurrentPicture.Pin.Y, Mode=TwoWay}"
+                   DragDelta="PinThumb_DragDelta">
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <Ellipse Width="14" Height="14" Fill="LightGreen" Stroke="Black" StrokeThickness="2"></Ellipse>
+                    </ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
+
+            <Rectangle x:Name="BoxVisual" Panel.ZIndex="90"
+                       Visibility="{Binding Path=CurrentPicture.Pin.IsBoundingBoxVisible, Converter={StaticResource BoolToVisConverter}}"
+                       Opacity="0.4"
+                       Fill="{Binding Path=CurrentPicture.Pin.IsBugIdentified, Converter={StaticResource BoolToColorConverter}}"
+                       Stroke="Black"
+                       StrokeThickness="1"
+                       Margin="5"
+                       Width="{Binding Path=CurrentPicture.Pin.BoundingBox.W}"
+                       Height="{Binding Path=CurrentPicture.Pin.BoundingBox.H}"
+                       Canvas.Left="{Binding Path=CurrentPicture.Pin.BoundingBox.X}" 
+                       Canvas.Top="{Binding Path=CurrentPicture.Pin.BoundingBox.Y}"/>
+
+            <Image Panel.ZIndex="1" Stretch="UniformToFill" x:Name="CurrentImage"
+                   Source="{Binding Path=CurrentPicture.ImageBytes}" PreviewMouseLeftButtonDown="CurrentImage_MouseLeftDown"></Image>
+        </Canvas>
+
         <StatusBar Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
             <StatusBarItem Content="{Binding Path=StatusMessage}"></StatusBarItem>
         </StatusBar>

@@ -52,10 +52,7 @@
     <Compile Include="ViewModels\PictureHeaderCollectionViewModel.cs" />
     <Compile Include="ViewModels\PictureHeaderViewModel.cs" />
     <Compile Include="ViewModels\PictureViewModel.cs" />
-    <Compile Include="ViewModels\PinCollectionViewModel.cs" />
-    <Compile Include="ViewModels\PinState.cs" />
     <Compile Include="ViewModels\PinViewModel.cs" />
-    <Compile Include="ViewModels\Position.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
   </ItemGroup>
   <ItemGroup />

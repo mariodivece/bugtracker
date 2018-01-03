@@ -9,5 +9,9 @@
         public const string StatusAvailable = nameof(StatusAvailable);
         public const string SelectedPictureHeader = nameof(SelectedPictureHeader);
         public const string TakePictureCommand = nameof(TakePictureCommand);
+        public const string DropPinCommand = nameof(DropPinCommand);
+        public const string FixPinCommand = nameof(FixPinCommand);
+        public const string ToggleBoundingBoxCommand = nameof(ToggleBoundingBoxCommand);
+        public const string MarkIdentifiedCommand = nameof(MarkIdentifiedCommand);
     }
 }

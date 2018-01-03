@@ -31,6 +31,10 @@
             MessageHub.Subscribe(MessageNames.StatusAvailable, OnStatusAvailable);
             MessageHub.Subscribe(MessageNames.SelectedPictureHeader, OnSelectedPictureHeader);
             MessageHub.Subscribe(MessageNames.TakePictureCommand, OnTakePictureCommand);
+            MessageHub.Subscribe(MessageNames.DropPinCommand, OnDropPinCommand);
+            MessageHub.Subscribe(MessageNames.FixPinCommand, OnFixPinCommand);
+            MessageHub.Subscribe(MessageNames.ToggleBoundingBoxCommand, OnToggleBoundingBoxCommand);
+            MessageHub.Subscribe(MessageNames.MarkIdentifiedCommand, OnMarkIdentifiedCommand);
         }
 
         #region Properties
@@ -124,6 +128,54 @@
         }
 
         /// <summary>
+        /// Called when [drop pin command].
+        /// </summary>
+        /// <param name="payload">The payload.</param>
+        /// <returns></returns>
+        private Task OnDropPinCommand(object payload)
+        {
+            var coordinates = payload as Tuple<double, double>;
+            if (coordinates == null) coordinates = new Tuple<double, double>(0, 0);
+
+            if (CurrentPicture != null)
+            {
+                CurrentPicture.Pin.X = coordinates.Item1;
+                CurrentPicture.Pin.Y = coordinates.Item2;
+                CurrentPicture.Pin.IsActive = true;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Called when [toggle bounding box command].
+        /// </summary>
+        /// <param name="payload">The payload.</param>
+        /// <returns></returns>
+        private Task OnToggleBoundingBoxCommand(object payload)
+        {
+            if (CurrentPicture != null && CurrentPicture.Pin.IsActive)
+                CurrentPicture.Pin.IsBoundingBoxVisible = !CurrentPicture.Pin.IsBoundingBoxVisible;
+
+            return Task.CompletedTask;
+        }
+        /// <summary>
+        /// Called when [mark identified command].
+        /// </summary>
+        /// <param name="payload">The payload.</param>
+        /// <returns></returns>
+        private Task OnMarkIdentifiedCommand(object payload)
+        {
+            if (CurrentPicture != null && CurrentPicture.Pin.IsActive)
+            {
+                CurrentPicture.Pin.IsBoundingBoxVisible = true;
+                CurrentPicture.Pin.IsBugIdentified = true;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
         /// Called when [user interface loaded].
         /// </summary>
         /// <param name="payload">The payload.</param>
@@ -137,6 +189,47 @@
                 var pictures = await StoreProvider.RetrievePictureHeadersAsync();
                 foreach (var p in pictures)
                     PictureHeaders.Add(p);
+
+                MessageHub.Publish(MessageNames.StatusAvailable, "Ready");
+            }
+            catch (Exception ex)
+            {
+                // We send a status message to the hub but it should really be an Error message of its own type
+                MessageHub.Publish(MessageNames.StatusAvailable, $"Error: {ex.Message}");
+            }
+            finally
+            {
+                IsUserInterfaceEnabled = true;
+            }
+
+        }
+
+        /// <summary>
+        /// Called when [user interface loaded].
+        /// </summary>
+        /// <param name="payload">The payload.</param>
+        /// <returns></returns>
+        private async Task OnFixPinCommand(object payload)
+        {
+            try
+            {
+                if (CurrentPicture == null)
+                    throw new InvalidOperationException("There is no selected picture to fix!");
+
+                IsUserInterfaceEnabled = false;
+                MessageHub.Publish(MessageNames.StatusAvailable, "Calling Deep Learning Service . . .");
+
+                // Simulate we are calling the service.
+                await Task.Delay(1000);
+
+                // TODO: Set the state here
+                CurrentPicture.Pin.IsActive = true;
+                CurrentPicture.Pin.IsBoundingBoxVisible = true;
+                CurrentPicture.Pin.BoundingBox.W = 50;
+                CurrentPicture.Pin.BoundingBox.H = 50;
+                CurrentPicture.Pin.X = 100;
+                CurrentPicture.Pin.Y = 100;
+                CurrentPicture.Pin.IsBugIdentified = true;
 
                 MessageHub.Publish(MessageNames.StatusAvailable, "Ready");
             }

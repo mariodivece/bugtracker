@@ -62,13 +62,14 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Converters\BoolToColorConverter.cs" />
+    <Compile Include="Converters\BoolToVisConverter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PinPositionConverter.cs" />
     <Compile Include="Platform\MockDevice.cs" />
     <Compile Include="Platform\MockStoreProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
